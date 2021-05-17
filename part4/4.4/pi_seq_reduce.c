@@ -23,6 +23,9 @@ int main(int argc, char* argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Status stat;
     
+    double start_time, stop_time, elapsed_time;
+    start_time = MPI_Wtime();
+
     int global_count = 0;
 
     srand(SEED * rank); // Important: Multiply SEED by "rank" when you introduce MPI!
@@ -51,6 +54,12 @@ int main(int argc, char* argv[])
     {    
         // Estimate Pi and display the result
         pi = ((double)global_count / (double)NUM_ITER) * 4.0;
+
+        stop_time = MPI_Wtime();
+	    elapsed_time = stop_time - start_time;
+    	
+        printf("It took %f seconds\n", elapsed_time);
+
 
         printf("The result is %f by rank: %d\n", pi, rank);
     }
