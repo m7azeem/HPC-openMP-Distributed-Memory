@@ -35,6 +35,7 @@ int main(int argc, char *argv[]){
     // ...
     // ...  
     MPI_Status stat;
+
 for (size_t i = 0; i+1 < size; i++)
 {
   if (rank == i)
@@ -48,7 +49,17 @@ for (size_t i = 0; i+1 < size; i++)
   }
 }
 
-
+//wrap around
+if (rank == 0)
+{
+  MPI_Send(&f[1], 1, MPI_DOUBLE, size-1, 10, MPI_COMM_WORLD);
+  MPI_Recv(&f[0], 1, MPI_DOUBLE, size-1, 10, MPI_COMM_WORLD, &stat);
+}
+if (rank == size -1)
+{
+  MPI_Recv(&f[nxn_loc-1], 1, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD, &stat);
+  MPI_Send(&f[nxn_loc-2], 1, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD);
+}
 
 // if (rank == 0)
 // {
@@ -74,7 +85,7 @@ for (size_t i = 0; i+1 < size; i++)
     if (rank==0){
       // print only rank 0 for convenience        
       printf("My rank %d of %d\n", rank, size );        
-      printf("Here are my values for f including ghost cells\n");        
+      printf("Here are my values for f including ghost cells\n");
       for (i=0; i<nxn_loc; i++)       
         printf("f (sin): %f, dfdx: %f, cos: %f\n", f[i], dfdx[i], cos(L_loc*rank + (i-1) * dx));
         // printf("%f\n", f[i]);
